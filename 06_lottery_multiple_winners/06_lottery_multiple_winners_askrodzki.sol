@@ -18,7 +18,7 @@ contract SingleLottery{
     uint256 public constant WAITING_FOR_RANDOMNESS = 3;
     uint256 public constant SOLVING_LOTERRY = 4;
     uint256 public constant LOTTERY_SOLVED = 5;
-    uint256 public constant REGISTRATION_DURATION = 1 days;
+    uint256 public constant REGISTRATION_DURATION = 10 minutes;
     uint256 public startTime; 
     uint256 public waitingStartBlockNumber;
     uint8 public winningNumber;
@@ -122,7 +122,12 @@ contract SingleLottery{
         winningNumber = uint8(luckyNumber);
         lotterySolved = true;
         owner.supplyFunds.value(address(this).balance/2)();//half for next lotteries
-        payoutSum = address(this).balance/choiceCount[winningNumber];
+        if(choiceCount[winningNumber]>0){
+            payoutSum = address(this).balance/choiceCount[winningNumber];
+        }
+        else{
+            owner.supplyFunds.value(address(this).balance)();//no winners all for next lottery
+        }
     }
     
     event NewLottery(uint256 blockNum);
