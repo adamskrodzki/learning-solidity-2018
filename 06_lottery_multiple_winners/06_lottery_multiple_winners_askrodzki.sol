@@ -31,6 +31,12 @@ contract SingleLottery{
         _;
     }
     
+    constructor() public{
+        owner = LotteryCompany(msg.sender);
+        startTime = now;
+        NewLottery(block.number);
+    }
+    
     
     function play(uint8 choice,address sender) public payable onlyOwner returns(uint256){
         require(choice>0 && choice<101);
@@ -119,6 +125,7 @@ contract SingleLottery{
         payoutSum = address(this).balance/choiceCount[winningNumber];
     }
     
+    event NewLottery(uint256 blockNum);
     event ClosingList(uint256 blockNum);
     event UserRegistered(address adr,uint8 choice);
     event UseRewarded(address adr,uint256 blockNum);
@@ -127,7 +134,7 @@ contract LotteryCompany{
 
     
     //assumes that lotteries never overlap
-    SingleLottery currentLottery;
+    SingleLottery public currentLottery;
     mapping(address => address) lastPlayed;
     uint256 public constant LOTTERY_SOLVED = 5; // same as in SingleLottery
     
